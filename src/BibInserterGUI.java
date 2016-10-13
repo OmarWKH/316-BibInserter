@@ -5,20 +5,20 @@ import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
 
-public class BibInserterGUI {
-	JFrame frame = new JFrame();
+public class BibInserterGUI extends JFrame {
 	JTextField textField1 = new JTextField("textField1");
 	JTextField textField2 = new JTextField("textField2");
 	JComponent[] components = {textField1, textField2};
 	
 	public BibInserterGUI() {
-		frame.setLayout(new BoxLayout(frame.getContentPane(), BoxLayout.Y_AXIS));
+		super();
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		
 		for (JComponent component : components) {
-			frame.add(component);
+			this.add(component);
 		}
 		
-		frame.pack();
+		this.pack();
 		textField2.requestFocusInWindow();
 	}
 	
@@ -31,12 +31,12 @@ public class BibInserterGUI {
 	  //do nothing, handle in method
 	// worries: made focused on showGUI()? already shown/hidden, not reset
 	public void showGUI() {
-		frame.setVisible(true);
-		frame.toFront();
+		this.setVisible(true);
+		this.toFront();
 	}
 	
 	public void hideGUI() {
 		//with dispose(), focus is not on textField
-		frame.setVisible(false);
+		this.setVisible(false);
 	}
 }
