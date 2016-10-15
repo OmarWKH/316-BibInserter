@@ -5,16 +5,18 @@
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import java.nio.file.Paths;
-import java.nio.file.Path;
-import java.nio.file.Files;
-import java.nio.file.attribute.FileTime;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
-import java.util.HashMap;
-
+import java.util.List;
+import java.io.Console;
 /*
 Design, UML, Classes, Code, Test
+
+Structure, observer, passing|public|package/protected
+Generalized, dependent
+BibInserter --> All
+GUI <--> Shortcuts/Input
 
 Parsing
 Searching
@@ -29,22 +31,24 @@ Packaging
 */
 
 public class BibInserter {
-	private static Path bibFilePath;
-	private static FileTime lastModificatoinTime;
-	private static BibInserterGUI gui;
-	private static BibShortcutGUIManager shortcuts;
-	private static HashMap<String, BibEntry> BibEntries; //will be listed on search, mean anything?
+	protected static BibInserterGUI gui;
+	protected static BibShortcutGUIManager shortcuts;
+	protected static BibFile file;
 	
 	//exceptions
 	public static void main(String[] args) {
 		try {
 			//setUpGUI() has to be done first, so lock and feel works properly
 			//and to work with shortcuts (in current implmentation)
-			setUpShortcuts(setUpGUI());
+			setUpGUI();
+			setUpShortcuts();
 		} catch (Exception e) {
+			System.err.println("Error(s) in setting up GUI and shortcuts");
 			e.printStackTrace();
 			System.exit(1);
 		}
+		
+		//file = BibParser.readEntries();
 		
 		/*//testing passed argument
 			//pass file name in cd, proper
@@ -56,28 +60,36 @@ public class BibInserter {
 			//or wrap file parser in a method below
 		*/
 		try {
-			bibFilePath = Paths.get(args[0]);
+			file = new BibFile(args[0]);
+			file.loadFile();
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Error: Forgot to pass a file");
 			System.exit(1);
-		}
-		
-		try {
-			parseChangedBibFile(bibFilePath);
+		} catch (NoSuchFileException nsfe) {
+			System.err.println("Error: File does not exist");
+			nsfe.printStackTrace();
+			System.exit(1);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			System.exit(1);
 		}
 		
+		/*try {
+			parseChangedBibFile(bibFilePath);
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+			System.exit(1);
+		}*/
+		
 		//improper loop, prompts are not shortcuts
+		Console console = System.console();
 		while (true) {
-			System.out.print("$ ");
-			String input = System.console().readLine();
+			String input = console.readLine("$ ");
 			if (input.contains("s")) {
 				gui.showGUI();
 			} else if (input.contains("h")) {
 				gui.hideGUI();
-			} else if (input.contains("c")) {
+			}/* else if (input.contains("c")) {
 				try {
 					System.out.println(parseChangedBibFile(bibFilePath));
 				} catch (Exception e) {
@@ -86,24 +98,45 @@ public class BibInserter {
 				}
 			} else if (input.contains("t")) {
 				System.out.println(lastModificatoinTime);
-			} else if (input.contains("q")) {
+			}*/ else if (input.contains("q")) {
 				System.exit(0);
+			} else if (input.contains("r")) {
+				try {
+					file.loadFile();
+				} catch (IOException ioe) {
+					System.exit(1);
+				}
+			} else if (input.contains("f")) {
+				String query = console.readLine(" ? ");
+				List<BibKey> results = file.find(query);
+				System.out.println(" Found: " + results.size());
+				System.out.println(results);
+				boolean keys = true;
+				while (keys) {
+					String key = console.readLine(" k: ");
+					if (key.contains("=")) {
+						keys = false;
+					} else {
+						System.out.println(file.getEntry(key));
+						//System.out.println(file.getEntry(results.get(0)));
+					}
+				}
 			}
 		}
 	}
 	
-	public static BibInserterGUI setUpGUI() throws UnsupportedLookAndFeelException,
+	public static void setUpGUI() throws UnsupportedLookAndFeelException,
 											ClassNotFoundException,
 											InstantiationException,
-											IllegalAccessException {
+											IllegalAccessException
+	{
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		gui = new BibInserterGUI();
-		return gui;
 	}
 	
 	//flow aint there
-	public static void setUpShortcuts(BibInserterGUI gui) {
-		shortcuts = BibShortcutGUIManager.create(gui);
+	public static void setUpShortcuts() {
+		shortcuts = BibShortcutGUIManager.create();
 	}
 	/*
 	public static void setUpShortcuts(BibInserterGUI gui) throws NativeHookException {
@@ -117,12 +150,12 @@ public class BibInserter {
 	}
 	*/
 	
-	public static boolean parseChangedBibFile(Path filePath) throws IOException {
+	/*public static boolean parseChangedBibFile(Path filePath) throws IOException {
 		boolean fileChanged = (lastModificatoinTime == null) || !lastModificatoinTime.equals(Files.getLastModifiedTime(filePath));
 		if (fileChanged) {
 			//read
 			lastModificatoinTime = Files.getLastModifiedTime(filePath); //given no failure
 		}
 		return fileChanged; //not sure
-	}
+	}*/
 }

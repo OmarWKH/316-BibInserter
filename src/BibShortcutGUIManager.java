@@ -7,7 +7,6 @@ import javax.swing.KeyStroke;
 //better design?
 //consider the gui?
 public class BibShortcutGUIManager {
-	private BibInserterGUI gui;
 	private static Provider provider;
 	private static BibShortcutGUIManager instance;
 	
@@ -15,8 +14,7 @@ public class BibShortcutGUIManager {
 	private static final String HIDE_HOTKEY = "released ESCAPE";
 	//..
 	
-	private BibShortcutGUIManager(BibInserterGUI gui) {
-		this.gui = gui;
+	private BibShortcutGUIManager() {
 		BibShortcutGUIManager.provider = Provider.getCurrentProvider(false);
 		BibShortcutGUIManager.instance = this;
 		
@@ -24,11 +22,19 @@ public class BibShortcutGUIManager {
 		registerHideGUIHotKey(HIDE_HOTKEY);
 	}
 	
+	public static BibShortcutGUIManager create() {
+		if (instance == null) {
+			return new BibShortcutGUIManager();
+		} else {
+			return instance;
+		}
+	}
+	
 	public void registerShowGUIHotKey(String hotKey) {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
-				gui.showGUI();
+				BibInserter.gui.showGUI();
 			}
 		});
 	}
@@ -37,7 +43,7 @@ public class BibShortcutGUIManager {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
-				gui.hideGUI();
+				BibInserter.gui.hideGUI();
 			}
 		});
 	}
@@ -52,11 +58,4 @@ public class BibShortcutGUIManager {
 		return keyStroke;
 	}
 	
-	public static BibShortcutGUIManager create(BibInserterGUI gui) {
-		if (instance == null) {
-			return new BibShortcutGUIManager(gui);
-		} else {
-			return instance;
-		}
-	}
 }

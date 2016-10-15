@@ -6,9 +6,9 @@ import javax.swing.JTextArea;
 import javax.swing.BoxLayout;
 
 public class BibInserterGUI extends JFrame {
-	JTextField textField1 = new JTextField("textField1");
-	JTextField textField2 = new JTextField("textField2");
-	JComponent[] components = {textField1, textField2};
+	private JTextField textField1 = new JTextField("textField1");
+	private JTextField textField2 = new JTextField("textField2");
+	private JComponent[] components = {textField1, textField2};
 	
 	public BibInserterGUI() {
 		super();
