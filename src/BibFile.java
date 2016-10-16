@@ -74,4 +74,8 @@ public class BibFile {
 	public Path getPath() {
 		return bibFilePath;
 	}
+	
+	public int getCount() {
+		return bibEntries.size();
+	}
 }

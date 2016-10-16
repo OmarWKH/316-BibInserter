@@ -85,7 +85,7 @@ public class BibFileParser {
 					value = value.substring(1, value.length());
 					break;
 			}
-			attributes.put(matcher.group("tag"), value);
+			attributes.put(matcher.group("tag").toLowerCase(), value);
 		}
 		
 		return new BibEntry(type, key, attributes, raw);

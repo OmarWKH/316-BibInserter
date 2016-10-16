@@ -13,6 +13,7 @@ public class BibEntry {
 	//does not force proper format, ok since only reading, would be irresponsible if writing
 	private Map<String, String> attributes;
 	private String raw;
+	
 	//type
 	//key
 	//hashmap of tags
@@ -30,16 +31,24 @@ public class BibEntry {
 		this.raw = raw;
 	}
 	
+	public String getType() {
+		return type;
+	} 
+
 	public BibKey getKey() {
 		return key;
 	}
-	
+		
 	public String getAttributeValues() {
 		return Arrays.toString(attributes.values().toArray());
 	}
 	
 	public String getRaw() {
 		return raw;
+	}
+	
+	public String getValueOf(String tag) {
+		return attributes.get(tag.toLowerCase());
 	}
 	
 	//getattribute(tag/field)/getvalue(tag) --ignore case--not found
