@@ -3,6 +3,8 @@ import com.tulskiy.keymaster.common.HotKeyListener;
 import com.tulskiy.keymaster.common.HotKey;
 
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import java.lang.reflect.InvocationTargetException;
 
 //better design?
 //consider the gui?
@@ -30,10 +32,19 @@ public class BibShortcutGUIManager {
 		}
 	}
 	
+	//here too, it would be cool to use yeild
 	public void registerShowGUIHotKey(String hotKey) {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
+				/*
+				try {
+					SwingUtilities.invokeAndWait(() -> BibInserter.gui.showGUI());
+				} catch(InterruptedException | InvocationTargetException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+				*/
 				BibInserter.gui.showGUI();
 			}
 		});

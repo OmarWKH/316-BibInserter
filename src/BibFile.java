@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
 import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+//import java.util.List;
+//import java.util.ArrayList;
+import java.util.Vector;
 
 public class BibFile {
 	private Path bibFilePath;
@@ -32,8 +33,8 @@ public class BibFile {
 	
 	//looks through key and attribute values
 	//if empty query
-	public List<BibKey> find(String query) {
-		List<BibKey> results = new ArrayList<BibKey>(bibEntries.size());
+	public Vector<BibKey> find(String query) {
+		Vector<BibKey> results = new Vector<BibKey>(bibEntries.size());
 		query = query.toLowerCase();
 		
 		for (BibEntry entry : bibEntries.values()) {

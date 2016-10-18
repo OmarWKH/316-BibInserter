@@ -1,7 +1,8 @@
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.event.*;
-import java.util.List;
+
+import java.util.Vector;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -49,60 +50,19 @@ public class BibInserterGUI extends JFrame {
 			}
 		);
 		
-		//set hotkeys hint
+		//fill on selection
+		entriesList.addListSelectionListener(e -> {
+			BibKey key = entriesList.getSelectedValue();
+			rawEntry.setText(key==null ? "" : BibInserter.file.getEntry(key).getRaw());
+		});
+		
+		//insertion hotkeys
+		bindHotkeys();
 		hotkeysLabel.setText(hotkeysText);
 
-		entriesListPanel.setViewportView(entriesList);
+		//netbeans layout stuff
+		configureLayout();
 
-		rawEntry.setEditable(false);
-		rawEntry.setColumns(20);
-		rawEntry.setRows(5);
-		//fill on select
-		entriesList.addListSelectionListener(e -> {
-			String key = ((BibKey)entriesList.getSelectedValue()).asString();
-			rawEntry.setText(BibInserter.file.getEntry(key).getRaw());
-		});
-		rawEntryPanel.setViewportView(rawEntry);
-
-		GroupLayout centerPanelLayout = new GroupLayout(centerPanel);
-		centerPanel.setLayout(centerPanelLayout);
-		centerPanelLayout.setHorizontalGroup(
-			centerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addGroup(centerPanelLayout.createSequentialGroup()
-				.addComponent(entriesListPanel, GroupLayout.PREFERRED_SIZE, 398, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(rawEntryPanel))
-		);
-		centerPanelLayout.setVerticalGroup(
-			centerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addComponent(entriesListPanel, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
-			.addComponent(rawEntryPanel)
-		);
-
-		GroupLayout layout = new GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addGroup(layout.createSequentialGroup()
-				.addComponent(searchField, GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
-				.addGap(18, 18, 18)
-				.addComponent(hotkeysLabel))
-			.addComponent(centerPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-			.addComponent(statusLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-		);
-		layout.setVerticalGroup(
-			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-			.addGroup(layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-					.addComponent(searchField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addComponent(hotkeysLabel))
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(centerPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(statusLabel))
-		);
-
-		bindHotkeys();
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
 		pack();
 	}
@@ -118,9 +78,17 @@ public class BibInserterGUI extends JFrame {
 	public void showGUI() {
 		if (!isVisible()) {
 			searchField.requestFocusInWindow();
+			searchField.setText("");
+			try {
+				BibInserter.file.loadFile();
+			} catch(java.io.IOException ioe) {
+				ioe.printStackTrace();
+				System.err.println("Error while loading file");
+				System.exit(1);
+			}
 			search();
 			statusLabel.setText("Bib File: " + BibInserter.file.getPath().toAbsolutePath().toString() +
-								" | Bib Entris: " + BibInserter.file.getCount());
+								" | Bib Entries: " + BibInserter.file.getCount());
 			this.setVisible(true);
 			this.toFront();
 		}
@@ -206,35 +174,62 @@ public class BibInserterGUI extends JFrame {
 	}
 	
 	private void search() {
+		String searchTerm;
 		try {
-			updateList();
+			searchTerm = searchField.getText();
 		} catch (NullPointerException npe) {
-			npe.printStackTrace();
-			System.err.println("Error: Threads, Events, Queues, Swing, Shortcuts/Insertion");
+			searchTerm = "";
 		}
-		updateMatchCount();
-	}
-	
-	private void updateList() throws NullPointerException {
-		entriesList.setModel(
-			new AbstractListModel<BibKey>() {
-				List<BibKey> results = results();
-				public List<BibKey> results() {
-					String searchTerm;
-					try {
-						searchTerm = searchField.getText();
-					} catch (NullPointerException npe) {
-						searchTerm = "";
-					}
-					return BibInserter.file.find(searchTerm);
-				}
-				public int getSize() { return results.size(); }
-				public BibKey getElementAt(int i) { return results.get(i); }
-			}
-		);
-	}
-	
-	private void updateMatchCount() {
+		Vector<BibKey> results = BibInserter.file.find(searchTerm);
+		entriesList.setListData(results);
+		
 		centerPanel.setBorder(BorderFactory.createTitledBorder("Matched entries: " + entriesList.getModel().getSize()));
+	}
+
+	private void configureLayout() {
+		entriesListPanel.setViewportView(entriesList);
+
+		rawEntry.setEditable(false);
+		rawEntry.setColumns(20);
+		rawEntry.setRows(5);
+		rawEntryPanel.setViewportView(rawEntry);
+
+		GroupLayout centerPanelLayout = new GroupLayout(centerPanel);
+		centerPanel.setLayout(centerPanelLayout);
+		centerPanelLayout.setHorizontalGroup(
+			centerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			.addGroup(centerPanelLayout.createSequentialGroup()
+				.addComponent(entriesListPanel, GroupLayout.PREFERRED_SIZE, 398, GroupLayout.PREFERRED_SIZE)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(rawEntryPanel))
+		);
+		centerPanelLayout.setVerticalGroup(
+			centerPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			.addComponent(entriesListPanel, GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE)
+			.addComponent(rawEntryPanel)
+		);
+
+		GroupLayout layout = new GroupLayout(getContentPane());
+		getContentPane().setLayout(layout);
+		layout.setHorizontalGroup(
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			.addGroup(layout.createSequentialGroup()
+				.addComponent(searchField, GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+				.addGap(18, 18, 18)
+				.addComponent(hotkeysLabel))
+			.addComponent(centerPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+			.addComponent(statusLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		);
+		layout.setVerticalGroup(
+			layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+			.addGroup(layout.createSequentialGroup()
+				.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+					.addComponent(searchField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addComponent(hotkeysLabel))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(centerPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+				.addComponent(statusLabel))
+		);
 	}
 }

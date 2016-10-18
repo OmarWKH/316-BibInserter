@@ -66,8 +66,8 @@ public class BibInserter {
 			System.out.println("Error: Forgot to pass a file");
 			System.exit(1);
 		} catch (NoSuchFileException nsfe) {
-			System.err.println("Error: File does not exist");
 			nsfe.printStackTrace();
+			System.err.println("Error: File does not exist");
 			System.exit(1);
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
