@@ -21,20 +21,22 @@ import java.util.regex.MatchResult;
 
 public class BibFileParser {
 	/*
-	  //Unescaped: @(?<type>\w+)\s*\{\s*(?<key>\S+)\s*,(?<attributes>.*?)(?=\}\s*@)+
-	  //Unescaped: @(?<type>\w+)\s*\{\s*(?<key>\S+)\s*,(?<attributes>[\s\S]*)\}
-	  //Unescaped: (?<tag>\w+)\s*\=\s*[\{|"]?(?<value>.+?)[\}|"]?(?=,\s*\w+\s*\=)+
-	  //Unescaped: (?<tag>\w+)\s*\=\s*(?<value>.+)
+	  Unescaped (in order below):
+	   @(?<type>\w+)\s*\{\s*(?<key>\S+)\s*,(?<attributes>.*?)(?=\}\s*@)+
+	   @(?<type>\w+)\s*\{\s*(?<key>\S+)\s*,(?<attributes>[\s\S]*)\}
+	   (?<tag>\w+)\s*\=\s*[\{|"]?(?<value>.+?)[\}|"]?(?=,\s*\w+\s*\=)+
+	   (?<tag>\w+)\s*\=\s*[\{|"]?(?<value>.+?)[\}|"]
 	*/
 	private static final String TYPE_KEY_ATTRIBUTES_PATTERN_LOOKAHEAD = "@(?<type>\\w+)\\s*\\{\\s*(?<key>\\S+)\\s*,(?<attributes>.*?)(?=\\}\\s*@)+";
 	private static final String TYPE_KEY_ATTRIBUTES_PATTERN_SINGLE = "@(?<type>\\w+)\\s*\\{\\s*(?<key>\\S+)\\s*,(?<attributes>[\\s\\S]*)\\}";
 	private static final String TAG_VALUE_LOOKAHEAD = "(?<tag>\\w+)\\s*\\=\\s*[\\{|\"]?(?<value>.+?)[\\}|\"]?(?=,\\s*\\w+\\s*\\=)+";
-	private static final String TAG_VALUE_SINGLE = "(?<tag>\\w+)\\s*\\=\\s*(?<value>.+)";
+	private static final String TAG_VALUE_SINGLE = "(?<tag>\\w+)\\s*\\=\\s*[\\{|\"]?(?<value>.+?)[\\}|\"]";
 	private static final int TYPE = 1, KEY = 2, ATTRIBUTES = 3;
 	private BibFileParser() {}
 	
-	public static HashMap<BibKey, BibEntry> parseFile(BibFile file) throws IOException {
-		String content = BibFileParser.readFile(file.getPath());
+	//raw will be missing closing brace except for last entry
+	public static HashMap<BibKey, BibEntry> parseFile(Path filePath) throws IOException {
+		String content = BibFileParser.readFileContent(filePath);
 		HashMap<BibKey, BibEntry> entries = new HashMap<>();
 		
 		//wouldn't it be neat to use yeild from ruby here?
@@ -47,10 +49,9 @@ public class BibFileParser {
 			entries.put(entry.getKey(), entry);
 		}
 		
-		Pattern lastPattern = Pattern.compile(TYPE_KEY_ATTRIBUTES_PATTERN_SINGLE);
+		Pattern lastPattern = Pattern.compile(TYPE_KEY_ATTRIBUTES_PATTERN_SINGLE, Pattern.DOTALL);
 		matcher = lastPattern.matcher(content.substring(end));
 		if (matcher.find()) {
-			//System.console().readLine("ReadIt:");
 			BibEntry entry = parseEntry(matcher.toMatchResult());
 			entries.put(entry.getKey(), entry);
 		}
@@ -58,7 +59,6 @@ public class BibFileParser {
 		return entries;
 	}
 	
-	//raw will be missing } except for last item
 	private static BibEntry parseEntry(MatchResult result) {
 		String raw = result.group();
 		String type = result.group(TYPE);
@@ -74,17 +74,11 @@ public class BibFileParser {
 			attributes.put(matcher.group("tag"), matcher.group("value"));
 		}
 		
-		Pattern lastPattern = Pattern.compile(TAG_VALUE_SINGLE);
+		Pattern lastPattern = Pattern.compile(TAG_VALUE_SINGLE, Pattern.DOTALL);
 		matcher = lastPattern.matcher(rawAttributes.substring(end));
 		if (matcher.find()) {
 			attributes.put(matcher.group("tag"), matcher.group("value"));
 			String value = matcher.group("value");
-			switch (value.charAt(0)) {
-				case '{':
-				case '"':
-					value = value.substring(1, value.length());
-					break;
-			}
 			attributes.put(matcher.group("tag").toLowerCase(), value);
 		}
 		
@@ -92,7 +86,7 @@ public class BibFileParser {
 	}
 	
 	//uses default platform encoding
-	private static String readFile(Path path) throws IOException {
+	private static String readFileContent(Path path) throws IOException {
 		byte[] fileBytes = Files.readAllBytes(path);
 		return new String(fileBytes);
 	}

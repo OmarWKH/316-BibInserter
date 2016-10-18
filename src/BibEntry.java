@@ -14,12 +14,6 @@ public class BibEntry {
 	private Map<String, String> attributes;
 	private String raw;
 	
-	//type
-	//key
-	//hashmap of tags
-	
-	//BibEntry(type, key, tags)
-	//BibEntry(bib entry as string) --parser's job? yes
 	public BibEntry(String type, String key, Map<String, String> attributes) {
 		this.type = type;
 		this.key = new BibKey(key);
@@ -50,10 +44,6 @@ public class BibEntry {
 	public String getValueOf(String tag) {
 		return attributes.get(tag.toLowerCase());
 	}
-	
-	//getattribute(tag/field)/getvalue(tag) --ignore case--not found
-	//gettype
-	//getkey
 	
 	//toString (key? type? formatted bib entry?)
 }

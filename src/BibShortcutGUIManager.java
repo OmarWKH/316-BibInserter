@@ -6,15 +6,12 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 
-//better design?
-//consider the gui?
 public class BibShortcutGUIManager {
 	private static Provider provider;
 	private static BibShortcutGUIManager instance;
 	
 	private static final String SHOW_HOTKEY = "control released B";
 	private static final String HIDE_HOTKEY = "released ESCAPE";
-	//..
 	
 	private BibShortcutGUIManager() {
 		BibShortcutGUIManager.provider = Provider.getCurrentProvider(false);

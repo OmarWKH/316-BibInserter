@@ -20,8 +20,6 @@ public class BibInserterGUI extends JFrame {
 	private String hotkeysText = "Insert: BibKey(Enter), Title(F1), Author(F2), title-author-year(F3)";
 	
 	//order
-	//that exception
-	//size
 	public BibInserterGUI() {
 		searchField = new JTextField();
 		hotkeysLabel = new JLabel();
@@ -53,7 +51,7 @@ public class BibInserterGUI extends JFrame {
 		//fill on selection
 		entriesList.addListSelectionListener(e -> {
 			BibKey key = entriesList.getSelectedValue();
-			rawEntry.setText(key==null ? "" : BibInserter.file.getEntry(key).getRaw());
+			rawEntry.setText(key==null ? "" : BibInserter.file.getEntry(key).getValueOf("url"));
 		});
 		
 		//insertion hotkeys

@@ -6,14 +6,12 @@ import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
 import java.util.Map;
-//import java.util.List;
-//import java.util.ArrayList;
 import java.util.Vector;
 
 public class BibFile {
 	private Path bibFilePath;
-	private FileTime lastModificatoinTime;
-	private Map<BibKey, BibEntry> bibEntries; //will be listed on search, mean anything?
+	private FileTime lastModificationTime;
+	private Map<BibKey, BibEntry> bibEntries;
 	
 	public BibFile(Path filePath) throws NoSuchFileException {
 		this.bibFilePath = filePath;
@@ -26,14 +24,29 @@ public class BibFile {
 	
 	public void loadFile() throws IOException {
 		if (wasChanged()) {
-			bibEntries = BibFileParser.parseFile(this);
-			markAsRead(); //given no failure //--modularize change?
+			bibEntries = BibFileParser.parseFile(this.getPath());
+			markAsRead(); //given no failure?
+		}
+	}
+	//supposed to do more
+	public void validateFile() throws NoSuchFileException {
+		if (Files.notExists(bibFilePath)) {
+			throw new NoSuchFileException(bibFilePath.toString());
 		}
 	}
 	
-	//looks through key and attribute values
-	//if empty query
+	public boolean wasChanged() throws IOException {
+		return (lastModificationTime == null) || !lastModificationTime.equals(Files.getLastModifiedTime(bibFilePath));
+	}
+
+	private void markAsRead() throws IOException {
+		lastModificationTime = Files.getLastModifiedTime(bibFilePath);
+	}
+	
+	//looks through key and attribute values, uses String.contains ignoring case
+	//therefore, if query is empty string, all entries would be returned
 	public Vector<BibKey> find(String query) {
+		
 		Vector<BibKey> results = new Vector<BibKey>(bibEntries.size());
 		query = query.toLowerCase();
 		
@@ -57,21 +70,6 @@ public class BibFile {
 		return getEntry(new BibKey(key));
 	}
 	
-	//supposed to do more
-	public void validateFile() throws NoSuchFileException {
-		if (Files.notExists(bibFilePath)) {
-			throw new NoSuchFileException(bibFilePath.toString());
-		}
-	}
-	
-	private void markAsRead() throws IOException {
-		lastModificatoinTime = Files.getLastModifiedTime(bibFilePath);
-	}
-	
-	public boolean wasChanged() throws IOException {
-		return (lastModificatoinTime == null) || !lastModificatoinTime.equals(Files.getLastModifiedTime(bibFilePath));
-	}
-
 	public Path getPath() {
 		return bibFilePath;
 	}
