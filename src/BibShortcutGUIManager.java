@@ -14,7 +14,7 @@ public class BibShortcutGUIManager {
 	private static Provider provider;
 	private static BibShortcutGUIManager instance;
 	
-	private static final String SHOW_HOTKEY = "control released B";
+	private static final String SHOW_HOTKEY = "control shift released B";
 	private static final String HIDE_HOTKEY = "released ESCAPE";
 	
 	private BibShortcutGUIManager() {
@@ -38,7 +38,7 @@ public class BibShortcutGUIManager {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
-				BibInserter.gui.showGUI();
+				BibInserter.searchGUI.showGUI();
 			}
 		});
 	}
@@ -47,7 +47,7 @@ public class BibShortcutGUIManager {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
-				BibInserter.gui.hideGUI();
+				BibInserter.searchGUI.hideGUI();
 			}
 		});
 	}

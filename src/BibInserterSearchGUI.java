@@ -8,10 +8,10 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 
 /**
- * BibInserterGUI lists BibEntries that match the search field and allows inserting information of the selected entry via hotkeys.
+ * BibInserterSearchGUI lists BibEntries that match the search field and allows inserting information of the selected entry via hotkeys.
  * Can be shown/hidden.
  */
-public class BibInserterGUI extends JFrame {
+public class BibInserterSearchGUI extends JFrame {
 	private JPanel centerPanel;
     private JList<BibKey> entriesList;
     private JLabel hotkeysLabel;
@@ -22,7 +22,7 @@ public class BibInserterGUI extends JFrame {
     private JLabel statusLabel;
 	private String hotkeysText = "Insert: BibKey(Enter), Title(F1), Author(F2), title-author-year(F3)";
 	
-	public BibInserterGUI() {
+	public BibInserterSearchGUI() {
 		searchField = new JTextField();
 		hotkeysLabel = new JLabel();
 		centerPanel = new JPanel();
@@ -32,6 +32,8 @@ public class BibInserterGUI extends JFrame {
 		rawEntryPanel = new JScrollPane();
 		rawEntry = new JTextArea();
 		statusLabel = new JLabel();
+		
+		setTitle("BibInserter Search");
 		
 		//search on change
 		searchField.getDocument().addDocumentListener(
@@ -71,16 +73,7 @@ public class BibInserterGUI extends JFrame {
 		if (!isVisible()) {
 			searchField.requestFocusInWindow();
 			searchField.setText("");
-			try {
-				BibInserter.file.loadFile();
-			} catch(java.io.IOException ioe) {
-				ioe.printStackTrace();
-				System.err.println("Error while loading file");
-				System.exit(1);
-			}
 			search();
-			statusLabel.setText("Bib File: " + BibInserter.file.getPath().toAbsolutePath().toString() +
-								" | Bib Entries: " + BibInserter.file.getCount());
 			this.setVisible(true);
 			this.toFront();
 		}
@@ -166,7 +159,6 @@ public class BibInserterGUI extends JFrame {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("DOWN"), "list_down");
 		getRootPane().getActionMap().put("list_down", new AbstractAction() {
 			public void actionPerformed(ActionEvent ae) {
-				System.out.println("DOWN was pressed");
 				int selected = entriesList.getSelectedIndex();
 				entriesList.setSelectedIndex(selected+1);
 			}
@@ -174,18 +166,35 @@ public class BibInserterGUI extends JFrame {
 	}
 	
 	private void search() {
-		String searchTerm;
-		try {
-			searchTerm = searchField.getText();
-		} catch (NullPointerException npe) {
-			searchTerm = "";
+		if (BibInserter.file == null) {
+			centerPanel.setBorder(BorderFactory.createTitledBorder("Matched entries: 0"));
+			statusLabel.setText("Bib File: none | Bib Entries: 0");
+		} else {
+			String statusWarning = "";
+			try {
+				BibInserter.file.loadFile();
+			} catch (java.io.IOException ioe) {
+				ioe.printStackTrace();
+				statusWarning = "Error: File loading error. ";
+				System.err.println(statusWarning);
+			}
+
+			String searchTerm;
+			try {
+				searchTerm = searchField.getText();
+			} catch (NullPointerException npe) {
+				searchTerm = "";
+			}
+			Vector<BibKey> results = BibInserter.file.find(searchTerm);
+			entriesList.setListData(results);
+			
+			centerPanel.setBorder(BorderFactory.createTitledBorder("Matched entries: " + entriesList.getModel().getSize()));
+			statusLabel.setText(statusWarning + "Bib File: " + BibInserter.file.getPath().toAbsolutePath().toString() +
+								" | Bib Entries: " + BibInserter.file.getCount());
+			
+			entriesList.setSelectedIndex(0);
 		}
-		Vector<BibKey> results = BibInserter.file.find(searchTerm);
-		entriesList.setListData(results);
 		
-		centerPanel.setBorder(BorderFactory.createTitledBorder("Matched entries: " + entriesList.getModel().getSize()));
-		
-		entriesList.setSelectedIndex(0);
 	}
 
 	//magic

@@ -12,16 +12,18 @@ import java.io.Console;
  * Initializes and holds references to GUI, ShortcutManager, and file.
  */
 public class BibInserter {
-	protected static BibInserterGUI gui;
+	protected static BibInserterSearchGUI searchGUI;
+	protected static BibInserterConfigGUI configGUI;
 	protected static BibShortcutGUIManager shortcuts;
 	protected static BibFile file;
 	
 	public static void main(String[] args) {
-		//gui
+		//GUIs
 		try {
 			//has to be first line, else look and feel might be different
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			gui = new BibInserterGUI();
+			configGUI = new BibInserterConfigGUI();
+			searchGUI = new BibInserterSearchGUI();
 		} catch (UnsupportedLookAndFeelException | ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 			e.printStackTrace();
 			System.out.println("Error: GUI wasn't set up correctly");
@@ -31,20 +33,9 @@ public class BibInserter {
 		//shortcuts
 		shortcuts = BibShortcutGUIManager.create();
 		
-		//file
-		try {
-			file = new BibFile(args[0]);
-			file.loadFile();
-		} catch (ArrayIndexOutOfBoundsException e) {
-			System.out.println("Error: Forgot to pass a file");
-			System.exit(1);
-		} catch (NoSuchFileException nsfe) {
-			nsfe.printStackTrace();
-			System.err.println("Error: File does not exist");
-			System.exit(1);
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			System.exit(1);
+		//file, if null configGUI will do it
+		if (args[0] != null) {
+			initializeFile(args[0]);
 		}
 		
 		//for testing
@@ -52,9 +43,9 @@ public class BibInserter {
 		while (true) {
 			String input = console.readLine("$ ");
 			if (input.contains("s")) {
-				gui.showGUI();
+				searchGUI.showGUI();
 			} else if (input.contains("h")) {
-				gui.hideGUI();
+				searchGUI.hideGUI();
 			}/* else if (input.contains("c")) {
 				try {
 					System.out.println(parseChangedBibFile(bibFilePath));
@@ -88,6 +79,19 @@ public class BibInserter {
 					}
 				}
 			}
+		}
+	}
+	
+	protected static void initializeFile(String filePath) {
+		try {
+			file = new BibFile(filePath);
+			configGUI.updateChosenFileStatus();
+			file.loadFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+			String warning = "Error: File error.";
+			configGUI.updateChosenFileStatus(warning);
+			System.err.println(warning);
 		}
 	}
 }
