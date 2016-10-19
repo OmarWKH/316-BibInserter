@@ -1,3 +1,5 @@
+package omarwkh.bibtex;
+
 /**
  * Just a String currently. Could be expanded to verify a valid key.
  * Uses hashCode() and equals() are based on the String field (key). Such that two BibKey instances with the same key field would be equal with the same hash code.

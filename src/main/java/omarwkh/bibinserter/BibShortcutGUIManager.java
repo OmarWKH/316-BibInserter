@@ -1,3 +1,5 @@
+package omarwkh.bibinserter;
+
 import com.tulskiy.keymaster.common.Provider;
 import com.tulskiy.keymaster.common.HotKeyListener;
 import com.tulskiy.keymaster.common.HotKey;

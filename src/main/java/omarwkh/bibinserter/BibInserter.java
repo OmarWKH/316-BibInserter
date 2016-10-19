@@ -1,9 +1,15 @@
+package omarwkh.bibinserter;
+import omarwkh.bibtex.*;
+
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 
+import  java.util.prefs.*;
+
+//for testing
 import java.util.List;
 import java.io.Console;
 
@@ -16,6 +22,9 @@ public class BibInserter {
 	protected static BibInserterConfigGUI configGUI;
 	protected static BibShortcutGUIManager shortcuts;
 	protected static BibFile file;
+	
+	private static Preferences preferences;
+	private final static String FILE_LOCATION_PREFERENCE = "file_location";
 	
 	public static void main(String[] args) {
 		//GUIs
@@ -33,9 +42,22 @@ public class BibInserter {
 		//shortcuts
 		shortcuts = BibShortcutGUIManager.create();
 		
+		//preferences
+		try {
+			preferences = Preferences.userNodeForPackage(Class.forName("omarwkh.bibinserter.BibInserter"));
+		} catch (ClassNotFoundException cnfe) {
+			cnfe.printStackTrace();
+			System.exit(1);
+		}
+		
 		//file, if null configGUI will do it
-		if (args[0] != null) {
+		if (args.length > 0) {
 			initializeFile(args[0]);
+		} else {
+			String fileLocation = preferences.get(FILE_LOCATION_PREFERENCE, null);
+			if (fileLocation != null) {
+				initializeFile(fileLocation);
+			}
 		}
 		
 		//for testing
@@ -85,13 +107,18 @@ public class BibInserter {
 	protected static void initializeFile(String filePath) {
 		try {
 			file = new BibFile(filePath);
-			configGUI.updateChosenFileStatus();
 			file.loadFile();
+			configGUI.updateChosenFileStatus();
+			updatePreferences();
 		} catch (IOException e) {
 			e.printStackTrace();
 			String warning = "Error: File error.";
 			configGUI.updateChosenFileStatus(warning);
 			System.err.println(warning);
 		}
+	}
+	
+	private static void updatePreferences() {
+		preferences.put(FILE_LOCATION_PREFERENCE, file.getPath().toAbsolutePath().toString());
 	}
 }

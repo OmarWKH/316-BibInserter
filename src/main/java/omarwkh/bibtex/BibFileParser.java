@@ -1,3 +1,5 @@
+package omarwkh.bibtex;
+
 /**
  * Limited BibTex parser.
  * Goal: Serve BibInserter (search, read, insert)

@@ -1,3 +1,5 @@
+package omarwkh.bibinserter;
+
 import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -163,7 +165,7 @@ public class BibInserterConfigGUI extends JFrame {
 	private void chooseFileActionPerformed(ActionEvent evt) {                                           
 		JFileChooser chooser = new JFileChooser(new File("."));
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(
-			"BibTeX Database", "bib");
+			"bibtex Database", "bib");
 		chooser.setFileFilter(filter);
 		int returnVal = chooser.showOpenDialog(this);
 		if(returnVal == JFileChooser.APPROVE_OPTION) {

@@ -1,9 +1,11 @@
+package omarwkh.bibtex;
+
 import java.util.Map;
 import java.util.Arrays;
 
 /**
  * Current Goal: Be good enough for search function in BibInserter.
- * Does not represent a valid BibTeX entry.
+ * Does not represent a valid bibtex entry.
  * Cannot be changed or reconstructed into plaintext. Use getRaw() for text that was used to create the entry instance.
  * @see BibFileParse
  */
