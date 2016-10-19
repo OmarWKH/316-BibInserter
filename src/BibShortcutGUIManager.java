@@ -6,6 +6,10 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Manages shortcuts that don't belong to GUI components
+ * Manages showGUI() and hideGUI()
+ */
 public class BibShortcutGUIManager {
 	private static Provider provider;
 	private static BibShortcutGUIManager instance;
@@ -29,19 +33,11 @@ public class BibShortcutGUIManager {
 		}
 	}
 	
-	//here too, it would be cool to use yeild
+	//a way to not repeat the code in *Hide*?
 	public void registerShowGUIHotKey(String hotKey) {
 		KeyStroke keyStroke = getValidKeyStroke(hotKey);
 		provider.register(keyStroke, new HotKeyListener() {
 			public void onHotKey(HotKey hotKey) {
-				/*
-				try {
-					SwingUtilities.invokeAndWait(() -> BibInserter.gui.showGUI());
-				} catch(InterruptedException | InvocationTargetException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-				*/
 				BibInserter.gui.showGUI();
 			}
 		});

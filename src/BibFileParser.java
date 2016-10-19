@@ -1,13 +1,12 @@
-//parse given bib file into BibItems
 /**
-Limited BibTex parser.
-Goal: Serve BibInserter (search, read, insert String)
-Known limitations:
-- Ignores # operator
-- Ignores @string, @preamble, @comment
-- Output can not be used to create a file with the same structure as the original
-- Accepts illegal characters and invalid syntax as long as it does not interfere with parsing
-*/
+ * Limited BibTex parser.
+ * Goal: Serve BibInserter (search, read, insert)
+ * Known limitations:
+ * - Ignores # operator
+ * - Ignores @string, @preamble, @comment
+ * - Output can not be used to create a file with the same structure as the original
+ * - Accepts illegal characters and invalid syntax as long as it does not interfere with parsing
+ */
 
 import java.util.HashMap;
 
@@ -39,7 +38,6 @@ public class BibFileParser {
 		String content = BibFileParser.readFileContent(filePath);
 		HashMap<BibKey, BibEntry> entries = new HashMap<>();
 		
-		//wouldn't it be neat to use yeild from ruby here?
 		Pattern entryPattern = Pattern.compile(TYPE_KEY_ATTRIBUTES_PATTERN_LOOKAHEAD, Pattern.DOTALL);
 		Matcher matcher = entryPattern.matcher(content);
 		int end = 0;

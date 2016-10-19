@@ -7,12 +7,15 @@ import java.nio.file.NoSuchFileException;
 import java.util.List;
 import java.io.Console;
 
+/**
+ * BibInserter's main class.
+ * Initializes and holds references to GUI, ShortcutManager, and file.
+ */
 public class BibInserter {
 	protected static BibInserterGUI gui;
 	protected static BibShortcutGUIManager shortcuts;
 	protected static BibFile file;
 	
-	//exceptions
 	public static void main(String[] args) {
 		//gui
 		try {

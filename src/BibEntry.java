@@ -1,16 +1,15 @@
 import java.util.Map;
 import java.util.Arrays;
 
-//unchangable BibEntry
-/*
-Does not represent a valid BibTeX entry.
-Goal: Be good enough for search function in BibInserter.
-See BibFileParser
-*/
+/**
+ * Current Goal: Be good enough for search function in BibInserter.
+ * Does not represent a valid BibTeX entry.
+ * Cannot be changed or reconstructed into plaintext. Use getRaw() for text that was used to create the entry instance.
+ * @see BibFileParse
+ */
 public class BibEntry {
 	private String type;
 	private BibKey key;
-	//does not force proper format, ok since only reading, would be irresponsible if writing
 	private Map<String, String> attributes;
 	private String raw;
 	

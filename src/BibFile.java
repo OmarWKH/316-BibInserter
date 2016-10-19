@@ -8,6 +8,11 @@ import java.nio.file.NoSuchFileException;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * Represents a .bib file. Stores entries in a Map and allows searching through them by key or attribute value.
+ * Usage: Create an instance by passing file path. Call loadFile() to store entries. If file wasn't changed since last load operation, it won't be loaded.
+ * A file is changed if its last modification time was changed since last load operation.
+ */
 public class BibFile {
 	private Path bibFilePath;
 	private FileTime lastModificationTime;
