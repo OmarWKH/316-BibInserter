@@ -8,6 +8,15 @@ import javax.swing.filechooser.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * This GUI stays visible as long as the program runs (and the other way around).
+ * Through it the user can choose a .bib file and see shortcuts.
+ * The file might be already set if the user passed it as a command line argument to BibInserter.
+ *
+ * Could add:
+ * - Change shortcuts
+ * - Customize insertion patterns
+ */
 public class BibInserterConfigGUI extends JFrame {
 	private JButton chooseFile;
 	protected JLabel chosenFileState;
@@ -82,13 +91,13 @@ public class BibInserterConfigGUI extends JFrame {
 		insertTitleAuthorYearShortcut.setText("F3");
 		insertTitleAuthorYearShortcut.setFocusable(false);
 
-		setUpLayout();
+		configureLayout();
 		pack();
 		setVisible(true);
 	}
 
 	//netbeans layout stuff                         
-	private void setUpLayout() {
+	private void configureLayout() {
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(

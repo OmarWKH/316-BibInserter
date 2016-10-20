@@ -5,8 +5,6 @@ import com.tulskiy.keymaster.common.HotKeyListener;
 import com.tulskiy.keymaster.common.HotKey;
 
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Manages shortcuts that don't belong to GUI components
