@@ -83,7 +83,7 @@ public class BibInserter {
 				try {
 					file.loadFile();
 				} catch (IOException ioe) {
-					System.exit(1);
+					ioe.printStackTrace();
 				}
 			} else if (input.contains("f")) {
 				String query = console.readLine(" ? ");
