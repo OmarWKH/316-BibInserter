@@ -6,6 +6,7 @@ import javax.swing.event.*;
 import java.awt.event.*;
 
 import java.util.Vector;
+import java.util.Arrays;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -88,6 +89,9 @@ public class BibInserterSearchGUI extends JFrame {
 		}
 	}
 	
+	/**
+	 * Calls all methods to bind hotkeys.
+	 */
 	private void bindHotkeys() {
 		registerInsertAction(KeyStroke.getKeyStroke("ENTER"), "insert_bibkey", new String[]{"key"});
 		registerInsertAction(KeyStroke.getKeyStroke("F1"), "insert_title", new String[]{"title"});
@@ -97,6 +101,11 @@ public class BibInserterSearchGUI extends JFrame {
 		registerListTraversal();
 	}
 	
+	/**
+	 * @param stroke The hotkey to trigger the action
+	 * @param actionName Name of the action to be triggered
+	 * @param toInsert Lists the entry attributes to be inserted with - as the delimiter. Accepts "key" and "type" as well.
+	 */
 	private void registerInsertAction(KeyStroke stroke, String actionName, String[] toInsert) {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, actionName);
 		getRootPane().getActionMap().put(actionName, new AbstractAction() {
@@ -123,7 +132,12 @@ public class BibInserterSearchGUI extends JFrame {
 		});
 	}
 	
-	//overrides user's clipboard content
+	/**
+	 * Inserts the given string by copying it to the system clipboard then pasting it.
+	 * Uses Robot to paste with ^V. Application will terminate if Robot is not supported.
+	 * Overrides user's clipboard content.
+	 * @param toInsert The string to be inserted
+	 */
 	private void insertByClipboard(String toInsert) {
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		StringSelection owner = new StringSelection("BibInserter"); //that it?
@@ -148,6 +162,9 @@ public class BibInserterSearchGUI extends JFrame {
 		}
 	}
 	
+	/**
+	 * Allows the user to step up/down the entrise list with Up and Down arrows without the list having to be in focus.
+	 */
 	private void registerListTraversal() {
 		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("UP"), "list_up");
 		getRootPane().getActionMap().put("list_up", new AbstractAction() {
@@ -168,6 +185,27 @@ public class BibInserterSearchGUI extends JFrame {
 		});
 	}
 	
+	/**
+	 * Registers the given hotkey to the given action if it already exists.
+	 * @param stoke The hotkey
+	 * @param actionName Name of the action
+	 * @return True if the action exists. False otherwise.
+	 */
+	private boolean registerExistingAction(KeyStroke stroke, String actionName) {
+		Action existingAction = getRootPane().getActionMap().get(actionName);
+		if (existingAction != null) {
+			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, actionName);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * Filters the entries list by the term written in the search field. Shows the whole list if no term is written.
+	 * The BibFile's loadFile() method is called every time.
+	 * Updates "Matched entries.." and status.
+	 */
 	private void search() {
 		if (BibInserter.file == null) {
 			centerPanel.setBorder(BorderFactory.createTitledBorder("Matched entries: 0"));
@@ -200,7 +238,9 @@ public class BibInserterSearchGUI extends JFrame {
 		
 	}
 
-	//magic
+	/**
+	 * Netbeans layout stuff.
+	 */
 	private void configureLayout() {
 		entriesListPanel.setViewportView(entriesList);
 

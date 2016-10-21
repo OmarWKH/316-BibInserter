@@ -7,7 +7,7 @@ import com.tulskiy.keymaster.common.HotKey;
 import javax.swing.KeyStroke;
 
 /**
- * Manages shortcuts that don't belong to GUI components
+ * Manages shortcuts that don't belong to GUI components.
  * Manages showGUI() and hideGUI()
  */
 public class BibShortcutGUIManager {
@@ -52,6 +52,12 @@ public class BibShortcutGUIManager {
 		});
 	}
 	
+	/**
+	 * Makes sure the given hotkey string represents a valid KeyStroke.
+	 * Terminates the application if the hotkey is not valid (could be handled better if new hotkey features are implemented).
+	 * @param hotKey The hotky string to be validated.
+	 * @return The KeyStroke represented by the given strong if it is valid.
+	 */
 	private static KeyStroke getValidKeyStroke(String hotKey) {
 		KeyStroke keyStroke = KeyStroke.getKeyStroke(hotKey);
 		if (keyStroke == null) {

@@ -50,7 +50,7 @@ public class BibInserter {
 			System.exit(1);
 		}
 		
-		//file, if null configGUI will do it
+		//file, if argument not passed configGUI will do it
 		if (args.length > 0) {
 			initializeFile(args[0]);
 		} else {

@@ -96,7 +96,9 @@ public class BibInserterConfigGUI extends JFrame {
 		setVisible(true);
 	}
 
-	//netbeans layout stuff                         
+	/**
+	 * Netbeans layout stuff
+	 */
 	private void configureLayout() {
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
@@ -184,6 +186,9 @@ public class BibInserterConfigGUI extends JFrame {
 		}
 	}
 	
+	/**
+	 * Same as updateChosenFileStatus("").
+	 */
 	public void updateChosenFileStatus() {
 		updateChosenFileStatus("");
 	}
