@@ -162,6 +162,7 @@ public class BibInserterSearchGUI extends JFrame {
 		}
 	}
 	
+	//issue: does not scroll
 	/**
 	 * Allows the user to step up/down the entrise list with Up and Down arrows without the list having to be in focus.
 	 */
@@ -173,6 +174,7 @@ public class BibInserterSearchGUI extends JFrame {
 				if (selected != -1) {
 					entriesList.setSelectedIndex(selected-1);
 				}
+				entriesList.ensureIndexIsVisible(entriesList.getSelectedIndex());
 			}
 		});
 		
@@ -181,6 +183,7 @@ public class BibInserterSearchGUI extends JFrame {
 			public void actionPerformed(ActionEvent ae) {
 				int selected = entriesList.getSelectedIndex();
 				entriesList.setSelectedIndex(selected+1);
+				entriesList.ensureIndexIsVisible(entriesList.getSelectedIndex());
 			}
 		});
 	}
