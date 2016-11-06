@@ -1,25 +1,7 @@
 #BibInserter
-BibInserter might add a key to your registery: HKEY_CURRENT_USER\SOFTWARE\JavaSoft\Prefs\omarwkh
+A tool to search through entries in a .bib file and insert their key for citation.
 
-##Files:
-- JAR
-	- BibInserter.jar
-- Source Code
-	-  src/
-- Dependency JARs
-	- lib/
-- JavaDoc
-	- docs/
-- Gradle Build Tool
-	- gradle.build
-	- gradle/
-	- gradlew
-	- gradlew.bat
-- Git
-	- .git
-	- .gitignore
-- Instructions
-	- README.md
+BibInserter might add a key to your registery: HKEY_CURRENT_USER\SOFTWARE\JavaSoft\Prefs\omarwkh
 
 ##Dependencies:
 - JKeyMaster: Global Hotkeys.
@@ -28,8 +10,6 @@ BibInserter might add a key to your registery: HKEY_CURRENT_USER\SOFTWARE\JavaSo
 	- org.slf4j:slf4j-jdk14:1.7.13
 
 ##How to compile:
-- Add source code to your IDE and reference dependency JARs.
-or
 - Run `gradlew build`. You'll find .class files in build/classes/ and JAR file in build/libs/. For more info: https://docs.gradle.org/current/userguide/gradle_wrapper.html#using_wrapper_scripts
 
 ##How to run:
