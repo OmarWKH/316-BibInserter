@@ -1,15 +1,5 @@
 package omarwkh.bibtex;
 
-/**
- * Limited BibTex parser.
- * Goal: Serve BibInserter (search, read, insert)
- * Known limitations:
- * - Ignores # operator
- * - Ignores @string, @preamble, @comment
- * - Output can not be used to create a file with the same structure as the original
- * - Accepts illegal characters and invalid syntax as long as it does not interfere with parsing
- */
-
 import java.util.HashMap;
 
 import java.nio.file.Path;
@@ -21,7 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.MatchResult;
 
 /**
- * Extracts BibTeX entries from .bib file.
+ * Limited BibTex parser.
+ * Goal: Serve BibInserter (search, read, insert)
+ * Known limitations:
+ * - Ignores # operator
+ * - Ignores @string, @preamble, @comment
+ * - Output can not be used to create a file with the same structure as the original
+ * - Accepts illegal characters and invalid syntax as long as it does not interfere with parsing
  */
 public class BibFileParser {
 	/**

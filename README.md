@@ -1,4 +1,5 @@
 #BibInserter
+BibInserter might add a key to your registery: HKEY_CURRENT_USER\SOFTWARE\JavaSoft\Prefs\omarwkh
 
 ##Files:
 - JAR
